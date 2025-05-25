@@ -49,11 +49,6 @@ class RBMAlgorithm(AlgoBase):
             recs = np.reshape(recs, [numItems, 10])
             
             for itemID, rec in enumerate(recs):
-                # The obvious thing would be to just take the rating with the highest score:                
-                #rating = rec.argmax()
-                # ... but this just leads to a huge multi-way tie for 5-star predictions.
-                # The paper suggests performing normalization over K values to get probabilities
-                # and take the expectation as your prediction, so we'll do that instead:
                 normalized = self.softmax(rec)
                 rating = np.average(np.arange(10), weights=normalized)
                 self.predictedRatings[uiid, itemID] = (rating + 1) * 0.5
@@ -62,7 +57,6 @@ class RBMAlgorithm(AlgoBase):
 
 
     def estimate(self, u, i):
-
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             raise PredictionImpossible('User and/or item is unkown.')
         
